@@ -16,9 +16,9 @@ class Sqs_queue():
         "Return sqs_client object"
         try:
             sqs_client = boto3.client('sqs')
-        except ClientError as error:                       
+        except ClientError as error:                 
             raise Exception('\nUnable to create SQS client!') from error    
-        except Exception as error:                  
+        except Exception as error:                    
             raise Exception('\nUnable to create SQS client!') from error
     
         return sqs_client
