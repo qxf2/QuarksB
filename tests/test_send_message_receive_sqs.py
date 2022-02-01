@@ -1,10 +1,13 @@
 import boto3
+import asyncio
 import json
 import logging
+import pytest
 import os,sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from conf import aws_conf as aws_conf
-import conf.sqs_conf as sqs_conf
+from conf import sqs_conf as sqs_conf
+from conf import channel_conf as channel_conf
 from pythonjsonlogger import jsonlogger
 from helpers import send_message_to_sqs
 from components import read_sqs
@@ -28,22 +31,28 @@ sqs_url = sqs_conf.QUEUE_URL_LIST
 
 
 
-def test_message_in_sqs(self,queue_url):
+def test_message_in_sqs():
     """Test message_in_sqs"""
-    """ TODO
-    Extract the message from the read_sqs
-    and compare it with the one that send from the test_send message 
+  
+    sqsmessage_obj = read_sqs.Sqsmessage()
+    message=sqsmessage_obj.get_messages_from_queue(sqs_url)
+    send_message_to_sqs.test_send_message()
+  
     
-    """
+    logger.info("Getting message from SQS Queue")
+    logger.info("---------------------------------------------------------------------------")
+    logger.info(message)
+    
+    logger.info("Validating message from SQS Queue")
+    logger.info("---------------------------------------------------------------------------")
+    assert channel_conf.MESSAGE in message ,'Message mismatch between Skype and SQS!'
 
-
+    
 
 
 if __name__=='__main__':
-    send_message_to_sqs.test_send_message()
-    sqsmessage_obj = read_sqs.Sqsmessage()
-    sqsmessage_obj.get_messages_from_queue(sqs_url)
-else:
-    print('ERROR: Received incorrect comand line input arguments')
+    test_message_in_sqs()
+    
+
 
 
