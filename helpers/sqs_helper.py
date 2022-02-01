@@ -49,8 +49,7 @@ class SQS():
                             AttributeNames=['All'],
                             MaxNumberOfMessages=1,
                             MessageAttributeNames=['All'],
-                            WaitTimeSeconds=20,
-                            VisibilityTimeout=15
+                            WaitTimeSeconds=20
                             )
         except ClientError as error:
             print(f'\nBotocore exception: {error}\n')
