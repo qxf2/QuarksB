@@ -9,21 +9,19 @@ import json
 import requests
 from conf import skype_config as config
 
-def send_skype_message():
+class Skype:
 
-    headers = {
-        'Content-Type': 'application/json',
-    }
-    
-    data = {}
-    data["msg"] = config.MESSAGE
-    data["channel"] = config.SKYPE_CHANNEL
-    data["API_KEY"] = config.API_KEY
+    def send_skype_message(self):
 
-    response = requests.post(config.SKYPE_URL, headers=headers, data=json.dumps(data))
+        headers = {
+            'Content-Type': 'application/json',
+        }
+        
+        data = {}
+        data["msg"] = config.MESSAGE
+        data["channel"] = config.SKYPE_CHANNEL
+        data["API_KEY"] = config.API_KEY
 
-    print(response.status_code)
+        response = requests.post(config.SKYPE_URL, headers=headers, data=json.dumps(data))
 
-
-if __name__ == '__main__':
-    send_skype_message()    
+        print(response.status_code)
