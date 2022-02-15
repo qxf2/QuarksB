@@ -15,8 +15,9 @@ def test_message_received_sqs(sqs_instance, skype_instance, concurrent_obj):
             future = executor.submit(sqs_instance.get_message_from_queue, sqs_conf.SQS_NAME)
             # wait 3 secs before triggering Skype message
             message = skype_conf.MESSAGE
+            url = skype_conf.SKYPE_SENDER_ENDPOINT
             time.sleep(3)
-            trigger_skype_message = skype_instance.post_message_on_skype(message)
+            trigger_skype_message = skype_instance.post_message_on_skype(message,url)
             sqs_messages = future.result()
 
         # validate if message found
