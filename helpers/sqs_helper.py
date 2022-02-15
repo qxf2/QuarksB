@@ -2,17 +2,15 @@
 Helper module for sqs messages
 """
 import json
-import os
-import sqlite3
-import sys
-import time
+
 import boto3
 from boto3 import Session
 from botocore.exceptions import ClientError
 from helpers.base_helper import BaseHelper
 
 # add project root to sys path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+#Can we not be doing this somehow? I feel like this is an anti-pattern. Of course, if it is strictly necessary, then we can use it.
+#sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from helpers.base_helper import BaseHelper
 from conf import sqs_conf
 
@@ -29,14 +27,15 @@ class SqsHelper(BaseHelper):
         """
         try:
             session = boto3.Session(profile_name='qxf2')
-            sqs_client = session.client('sqs',config=config)
+            self.client = session.client('sqs',config=config)
             self.write(f'Created SQS client')
         except ClientError as err:
             self.write(f'Exception - {err}, Unable to create SQS client', level='error')
         except Exception as err:
             self.write(f'Unable to create SQS client, due to {err}', level='error') 
 
-        return sqs_client
+        return self.client
+ 
 
     def get_message_from_queue(self, get_client, queue_name,attempts=3):
         """
@@ -47,14 +46,14 @@ class SqsHelper(BaseHelper):
         :return messages: messages list object
         """
         try:
-            sqs_client = get_client
-            queue_url = sqs_client.get_queue_url(QueueName= queue_name)
+            self.client = get_client
+            queue_url = self.client.get_queue_url(QueueName= queue_name)
             messages = []
 
             # run retrieve request with multiple attempts
             for attempt in range(attempts):
                 self.write(f'Finding message in queue')
-                message_obj = sqs_client.receive_message(QueueUrl=queue_url['QueueUrl'],
+                message_obj = self.client.receive_message(QueueUrl=queue_url['QueueUrl'],
                                                     AttributeNames=['All'],
                                                     MaxNumberOfMessages=5,
                                                     WaitTimeSeconds=20)

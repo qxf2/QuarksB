@@ -3,8 +3,7 @@
   - Validate message sent to Skype channel against the message received on SQS
 """
 import time
-from conf import sqs_conf
-from conf import skype_conf
+from conf import sqs_conf, skype_conf
 
 def test_message_received_sqs(sqs_instance, skype_instance, concurrent_obj):
     """
@@ -21,12 +20,12 @@ def test_message_received_sqs(sqs_instance, skype_instance, concurrent_obj):
             sqs_messages = future.result()
 
         # validate if message found
-        if_message_found = False
+        sqs_message_found = False
         for msg in sqs_messages:
             if message in msg:
-                if_message_found = True
+                sqs_message_found = True
                 break
-        assert if_message_found
+        assert sqs_message_found
 
     except Exception as err:
         raise(err)

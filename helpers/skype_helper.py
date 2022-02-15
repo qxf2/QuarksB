@@ -5,8 +5,7 @@ import os
 import sys
 import requests
 
-# add project root to sys path
-#sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+#Was this really needed? This is somewhat of an anti-pattern given that we use pytest.
 from helpers.base_helper import BaseHelper
 from conf import skype_conf
 
