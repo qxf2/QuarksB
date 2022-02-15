@@ -2,8 +2,6 @@
 Helper module for sqs messages
 """
 import json
-import os
-import sys
 import time
 import boto3
 from botocore.exceptions import ClientError

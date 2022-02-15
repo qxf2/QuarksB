@@ -1,8 +1,7 @@
 """
 Helper module for Skype
 """
-import os
-import sys
+
 import requests
 
 

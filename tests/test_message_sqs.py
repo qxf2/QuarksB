@@ -5,10 +5,7 @@
 import time
 from conf import sqs_conf
 from conf import skype_conf
-import os
-import sys
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 url = skype_conf.SKYPE_SENDER_ENDPOINT
 #aws_owner_id=str(os.environ.get('aws_access_key_id'))
@@ -33,7 +30,7 @@ def test_message_received_sqs(sqs_instance, skype_instance, concurrent_obj):
             if message in msg:
                 if_message_found = True
                 break
-        assert if_message_found
+        assert if_message_found,'Message mismatch between Skype and SQS!'
 
     except Exception as err:
         raise(err)
