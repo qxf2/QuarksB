@@ -3,10 +3,13 @@ Helper module for sqs messages
 """
 import json
 import os
+import sqlite3
 import sys
 import time
 import boto3
+from boto3 import Session
 from botocore.exceptions import ClientError
+from helpers.base_helper import BaseHelper
 
 # add project root to sys path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -17,15 +20,16 @@ class SqsHelper(BaseHelper):
     """
     SQS Helper object
     """
-
-    def get_sqs_client(self):
+      
+    def get_sqs_client(self,config):
         """
         Return sqs_client object
         :param self:
         :return sqs_client: SQS client object
         """
         try:
-            sqs_client = boto3.client('sqs', config=sqs_conf.config)
+            session = boto3.Session(profile_name='qxf2')
+            sqs_client = session.client('sqs',config=config)
             self.write(f'Created SQS client')
         except ClientError as err:
             self.write(f'Exception - {err}, Unable to create SQS client', level='error')
@@ -34,24 +38,7 @@ class SqsHelper(BaseHelper):
 
         return sqs_client
 
-    def get_sqs_queue(self, queue_name):
-        """
-        Get queue
-        :param self:
-        :param queue_name: queue name
-        :return queue: queue object
-        """
-        try:
-            queue = boto3.resource('sqs').get_queue_by_name(QueueName=queue_name)
-            self.write(f'Attained SQS queue by name')
-        except ClientError as err:
-            self.write(f'Exception - {err}, Unable to get SQS queue', level='error')
-        except Exception as err:
-            self.write(f'Unable to get SQS queue, due to {err}', level='error') 
-
-        return queue
-
-    def get_message_from_queue(self, queue_name, attempts=3):
+    def get_message_from_queue(self, get_client, queue_name,attempts=3):
         """
         Get message from queue
         :param self:
@@ -60,14 +47,14 @@ class SqsHelper(BaseHelper):
         :return messages: messages list object
         """
         try:
-            sqs_client = self.get_sqs_client()
-            queue = self.get_sqs_queue(queue_name)
+            sqs_client = get_client
+            queue_url = sqs_client.get_queue_url(QueueName= queue_name)
             messages = []
 
             # run retrieve request with multiple attempts
             for attempt in range(attempts):
                 self.write(f'Finding message in queue')
-                message_obj = sqs_client.receive_message(QueueUrl=queue.url,
+                message_obj = sqs_client.receive_message(QueueUrl=queue_url['QueueUrl'],
                                                     AttributeNames=['All'],
                                                     MaxNumberOfMessages=5,
                                                     WaitTimeSeconds=20)

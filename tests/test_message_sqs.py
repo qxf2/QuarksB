@@ -12,7 +12,8 @@ def test_message_received_sqs(sqs_instance, skype_instance, concurrent_obj):
     """
     try:
         with concurrent_obj.ThreadPoolExecutor() as executor:
-            future = executor.submit(sqs_instance.get_message_from_queue, sqs_conf.SQS_NAME)
+            get_client = executor.submit(sqs_instance.get_sqs_client, sqs_conf.config)
+            future = executor.submit(sqs_instance.get_message_from_queue, get_client.result(),sqs_conf.SQS_NAME)
             # wait 3 secs before triggering Skype message
             message = skype_conf.MESSAGE
             time.sleep(3)
