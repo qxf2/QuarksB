@@ -1,17 +1,17 @@
 """
 Helper module for sqs messages
 """
+from distutils.command.config import config
 import json
 import os
 import sys
 import time
 import boto3
 from botocore.exceptions import ClientError
-
 # add project root to sys path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from helpers.base_helper import BaseHelper
-from conf import sqs_conf
+from conf.sqs_conf import config
 
 class SqsHelper(BaseHelper):
     """
@@ -24,15 +24,16 @@ class SqsHelper(BaseHelper):
         :param self:
         :return sqs_client: SQS client object
         """
+        
         try:
-            sqs_client = boto3.client('sqs', config=sqs_conf.config)
+            self_client = boto3.client('sqs', config=config)
             self.write(f'Created SQS client')
         except ClientError as err:
             self.write(f'Exception - {err}, Unable to create SQS client', level='error')
         except Exception as err:
             self.write(f'Unable to create SQS client, due to {err}', level='error') 
 
-        return sqs_client
+        return self_client
 
     def get_sqs_queue(self, queue_name):
         """
@@ -61,7 +62,7 @@ class SqsHelper(BaseHelper):
         """
         try:
             sqs_client = self.get_sqs_client()
-            queue = self.get_sqs_queue(queue_name)
+            queue = self.sqs_client.get_queue_url(QueueName='staging-newsletter-generator')
             messages = []
 
             # run retrieve request with multiple attempts

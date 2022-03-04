@@ -2,11 +2,7 @@
 Queue conf
 """
 from botocore.config import Config
+import os
 
 SQS_NAME = "staging-newsletter-generator"
-config = Config(
-   retries = {
-      'max_attempts': 10,
-      'mode': 'standard'
-   }
-)
+config: os.environ['configuration']
