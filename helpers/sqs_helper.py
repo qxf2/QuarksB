@@ -33,24 +33,7 @@ class SqsHelper(BaseHelper):
             self.write(f'Unable to create SQS client, due to {err}', level='error') 
 
         return sqs_client
-
-    def get_sqs_queue(self, queue_name):
-        """
-        Get queue
-        :param self:
-        :param queue_name: queue name
-        :return queue: queue object
-        """
-        try:
-            queue = boto3.resource('sqs').get_queue_by_name(QueueName=queue_name)
-            self.write(f'Attained SQS queue by name')
-        except ClientError as err:
-            self.write(f'Exception - {err}, Unable to get SQS queue', level='error')
-        except Exception as err:
-            self.write(f'Unable to get SQS queue, due to {err}', level='error') 
-
-        return queue
-
+  
     def get_message_from_queue(self, queue_name, attempts=3):
         """
         Get message from queue
@@ -60,14 +43,13 @@ class SqsHelper(BaseHelper):
         :return messages: messages list object
         """
         try:
-            sqs_client = self.get_sqs_client()
-            queue = self.get_sqs_queue(queue_name)
+            sqs_client = self.get_sqs_client()            
             messages = []
 
             # run retrieve request with multiple attempts
             for attempt in range(attempts):
                 self.write(f'Finding message in queue')
-                message_obj = sqs_client.receive_message(QueueUrl=queue.url,
+                message_obj = sqs_client.receive_message(QueueUrl=sqs_conf.SQS_NAME,
                                                     AttributeNames=['All'],
                                                     MaxNumberOfMessages=5,
                                                     WaitTimeSeconds=20)
@@ -91,15 +73,14 @@ class SqsHelper(BaseHelper):
         """
         try:
             msg_body = []
-            messages = message_object.get('Messages',[])
-            if messages:
-                for msg in messages:
-                    str_body = msg.get('Body')
-                    if str_body:
-                        dict_body = json.loads(str_body)
-                        get_msg = json.loads(dict_body.get('Message'))
-                        if get_msg:
-                            msg_body.append(get_msg.get('msg'))
+            messages = message_object.get('Messages',[])            
+            for msg in messages:               
+                dict_body = json.loads(msg.body)                
+                msg_json = json.loads(dict_body.get('Message'))
+                if msg_json:
+                    msg_body.append(msg_json.get('msg'))
+                else:
+                    self.write(f'No messages gathered')    
             if msg_body:
                 self.write(f'Message found - {msg_body}')
         except Exception as err:
