@@ -6,7 +6,7 @@ def get_response_value(log_group,query):
     client = boto3.client('logs')
     start_query_response = client.start_query(
         logGroupName=log_group,
-        startTime=int((datetime.today() - timedelta(hours=1)).timestamp()),
+        startTime=int((datetime.today() - timedelta(minutes=10)).timestamp()),
         endTime=int(datetime.now().timestamp()),
         queryString=query,
     )

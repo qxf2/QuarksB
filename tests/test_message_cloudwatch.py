@@ -18,14 +18,12 @@ def test_message_received_cloudwatch(sqs_instance, skype_instance, concurrent_ob
         sent_message = str(skype_conf.MESSAGE)
         print("Sending message: " + sent_message)
         skype_url = skype_conf.SKYPE_SENDER_ENDPOINT
-        trigger_skype_message = skype_instance.post_message_on_skype(sent_message, skype_url)
+        skype_instance.post_message_on_skype(sent_message, skype_url)
 
-        time.sleep(2* 60)
+        time.sleep(2 * 60)
 
         get_msg_from_cloudwatch = cloudwatch_helper.get_response_value(cloudwatch_conf.log_group,cloudwatch_conf.query)
 
-
-        # Validate if message sent over skype is the same as received in the cloudwatch logs
         matched = False
         expected_message = sent_message
         print("expected message is " + sent_message)
