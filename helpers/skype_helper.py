@@ -3,6 +3,7 @@ Helper module for Skype
 """
 
 import requests
+import os
 
 
 from helpers.base_helper import BaseHelper
