@@ -67,8 +67,7 @@ def get_ptr_value(log_group,query):
         time.sleep(1)
         response = client.get_query_results(queryId=query_id)
         response_dict = get_data_structure(response)
-        print("Dict here",response_dict)
-        
+                
         if cloudwatch_conf.ptr_value in response_dict.keys():
             ptr_value = response_dict[cloudwatch_conf.ptr_value]
         else:
