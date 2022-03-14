@@ -1,5 +1,6 @@
 """
 The config file will list config details for cloud watch log group and query
+"""
 
 # settings for qxf2-employee-messages
 log_group = '/aws/lambda/staging-newsletter-url-filter'
