@@ -16,8 +16,7 @@ class CloudWatchHelper(BaseHelper):
     """
     Cloud watch Helper object
     """
-
-    def get_query_id(self):
+    def get_query_id(self, log_group, query):
         """
         Build a query
      
@@ -25,7 +24,7 @@ class CloudWatchHelper(BaseHelper):
         query_id = None
         try:           
             client = boto3.client('logs')
-            start_query_response = client.start_query(logGroupName=conf.log_group,
+            start_query_response = client.start_query(logGroupName=log_group,
                                                     startTime=int((datetime.now() - timedelta(minutes=10)).timestamp()),
                                                     endTime=int(datetime.now().timestamp()),
                                                     queryString=query)            
@@ -44,8 +43,9 @@ class CloudWatchHelper(BaseHelper):
             response = None    
             query_status_flag = True
             messages = None      
-            query_id = self.get_query_id()
+            query_id = self.get_query_id(log_group, query)
             time.sleep(100)
+            client = boto3.client('logs')
             while query_status_flag:
                 response = client.get_query_results(queryId=query_id)
                 if response['status'] == 'Complete':
@@ -55,7 +55,7 @@ class CloudWatchHelper(BaseHelper):
                 time.sleep(1)
             if (response):
                 print ("Got the response from the logs")
-                messages = logs_query_response.get('results', [])    
+                messages = response.get('results', [])    
                 if(messages):
                     self.write(f'CloudWatchLogs messages : {messages}')        
         except Exception as err:
