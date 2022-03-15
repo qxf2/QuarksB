@@ -17,8 +17,8 @@ class SkypeHelper(BaseHelper):
         try:
             headers = {'Content-Type': 'application/json'}
             payload = {"msg" : message,
-                      "channel": os.environ['CHANNEL_ID'],
-                      "API_KEY": os.environ['API_KEY']}
+                      "channel": os.environ.get['channel_id'],
+                      "API_KEY": os.environ.get['api_key']}
 
             response = requests.post(url=skype_conf.SKYPE_SENDER_ENDPOINT,
                                      json=payload, headers=headers)
