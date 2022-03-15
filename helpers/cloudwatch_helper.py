@@ -7,14 +7,11 @@ import sys
 from datetime import datetime, timedelta
 import time
 import collections
-
-# add project root to sys path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from helpers.base_helper import BaseHelper
 
 class CloudWatchHelper(BaseHelper):
     """
-    CloudWatch Helper class
+    CloudWatch helper object
     """
     def get_client(self):
         "Get cloud watch logs client"
