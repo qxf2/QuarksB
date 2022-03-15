@@ -2,7 +2,6 @@
  Test to validate skype messages messages on cloudwatch logs
 """
 import time, sys, os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from conf import skype_conf, cloudwatch_conf
 
 def test_cloudwatch_logs(cloudwatch_instance, skype_instance):
