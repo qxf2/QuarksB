@@ -44,16 +44,15 @@ class CloudWatchHelper(BaseHelper):
         Fetch the log messages from cloudwatch
         """
         try:
-            #response = None   
-            messages = None 
-            query_status_flag = True                  
+            status_flag = True   
+            messages = None                  
             query_id = self.get_query_id(log_group, query)
             time.sleep(100)
             client = self.get_client()
-            while query_status_flag:
+            while status_flag:
                 response = client.get_query_results(queryId=query_id)
                 if response['status'] == 'Complete':
-                    query_status_flag = False
+                    status_flag = False
                 else:
                     self.write('Cloudwatchlog query is running....')
                 time.sleep(1)
